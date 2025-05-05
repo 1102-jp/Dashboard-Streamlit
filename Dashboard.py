@@ -212,15 +212,15 @@ fig_sales_trend.update_layout(
     xaxis=dict(
         title="Date",
         range=[monthly_data['Order Date'].min() - pd.Timedelta(days=30), monthly_data['Order Date'].max() + pd.Timedelta(days=30)],
-        titlefont=dict(color='#000000', size=14),
+        title_font=dict(color='#000000', size=14),
         tickfont=dict(color='#000000', size=12),
-        showgrid=False  # Remove x-axis grid lines
+        showgrid=False
     ),
     yaxis=dict(
         title="Sales ($)",
-        titlefont=dict(color='#000000', size=14),
+        title_font=dict(color='#000000', size=14),
         tickfont=dict(color='#000000', size=12),
-        showgrid=False  # Remove y-axis grid lines
+        showgrid=False
     ),
     template='plotly_white',
     height=450,
@@ -270,15 +270,15 @@ fig_profit_trend.update_layout(
     xaxis=dict(
         title="Date",
         range=[monthly_data['Order Date'].min() - pd.Timedelta(days=30), monthly_data['Order Date'].max() + pd.Timedelta(days=30)],
-        titlefont=dict(color='#000000', size=14),
+        title_font=dict(color='#000000', size=14),
         tickfont=dict(color='#000000', size=12),
-        showgrid=False  # Remove x-axis grid lines
+        showgrid=False
     ),
     yaxis=dict(
         title="Profit ($)",
-        titlefont=dict(color='#000000', size=14),
+        title_font=dict(color='#000000', size=14),
         tickfont=dict(color='#000000', size=12),
-        showgrid=False  # Remove y-axis grid lines
+        showgrid=False
     ),
     template='plotly_white',
     height=450,
@@ -297,25 +297,25 @@ fig_profit_region = px.bar(
     template='plotly_white',
     color='Region',
     color_discrete_sequence=px.colors.qualitative.Set2,
-    text=profit_by_region['Profit'].apply(lambda x: f"${x:,.0f}")  # Display exact profit amount
+    text=profit_by_region['Profit'].apply(lambda x: f"${x:,.0f}")
 )
 fig_profit_region.update_traces(
     width=0.9,
-    textposition='auto',  # Position text on top of bars
+    textposition='auto',
     textfont=dict(color='#000000', size=12)
 )
 fig_profit_region.update_layout(
     title=dict(text="Profit by Region", font=dict(size=18, color='#1a3c6e'), x=0.5, xanchor='center'),
     xaxis=dict(
         title="Region",
-        titlefont=dict(color='#000000', size=14),
+        title_font=dict(color='#000000', size=14),
         tickfont=dict(color='#000000', size=12),
         tickangle=0,
         automargin=True
     ),
     yaxis=dict(
         title="Profit ($)",
-        titlefont=dict(color='#000000', size=14),
+        title_font=dict(color='#000000', size=14),
         tickfont=dict(color='#000000', size=12)
     ),
     bargap=0.2,
@@ -366,15 +366,15 @@ fig_discount_margin.update_layout(
     title=dict(text="Effect of Discount on Profit Margin", font=dict(size=18, color='#1a3c6e'), x=0.5, xanchor='center'),
     xaxis=dict(
         title="Discount Range (%)",
-        titlefont=dict(color='#000000', size=14),
+        title_font=dict(color='#000000', size=14),
         tickfont=dict(color='#000000', size=12),
-        showgrid=False  # Remove x-axis grid lines
+        showgrid=False
     ),
     yaxis=dict(
         title="Profit Margin (%)",
-        titlefont=dict(color='#000000', size=14),
+        title_font=dict(color='#000000', size=14),
         tickfont=dict(color='#000000', size=12),
-        showgrid=False  # Remove y-axis grid lines
+        showgrid=False
     ),
     template='plotly_white',
     height=450,
@@ -400,13 +400,13 @@ fig_top_products.update_layout(
     title=dict(text="Top 5 Sub-Categories by Sales", font=dict(size=18, color='#1a3c6e'), x=0.5, xanchor='center'),
     xaxis=dict(
         title="Sub-Category",
-        titlefont=dict(color='#000000', size=14),
+        title_font=dict(color='#000000', size=14),
         tickfont=dict(color='#000000', size=12),
         tickangle=0
     ),
     yaxis=dict(
         title="Sales ($)",
-        titlefont=dict(color='#000000', size=14),
+        title_font=dict(color='#000000', size=14),
         tickfont=dict(color='#000000', size=12)
     ),
     height=450,
@@ -536,14 +536,14 @@ if show_forecast:
         xaxis=dict(
             title="Date",
             range=[monthly_data['Order Date'].min() - pd.Timedelta(days=30), forecast_df['Order Date'].max() + pd.Timedelta(days=30)],
-            titlefont=dict(color='#000000', size=14),
+            title_font=dict(color='#000000', size=14),
             tickfont=dict(color='#000000', size=12),
             showgrid=True,
             gridcolor='#e0e7ff'
         ),
         yaxis=dict(
             title="Sales ($)",
-            titlefont=dict(color='#000000', size=14),
+            title_font=dict(color='#000000', size=14),
             tickfont=dict(color='#000000', size=12),
             showgrid=False
         ),
@@ -581,12 +581,12 @@ fig_heatmap.update_layout(
     title=dict(text="Sales by Segment and Category", font=dict(size=18, color='#1a3c6e'), x=0.5, xanchor='center'),
     xaxis=dict(
         title="Category",
-        titlefont=dict(color='#000000', size=14),
+        title_font=dict(color='#000000', size=14),
         tickfont=dict(color='#000000', size=12)
     ),
     yaxis=dict(
         title="Segment",
-        titlefont=dict(color='#000000', size=14),
+        title_font=dict(color='#000000', size=14),
         tickfont=dict(color='#000000', size=12)
     ),
     height=450,
