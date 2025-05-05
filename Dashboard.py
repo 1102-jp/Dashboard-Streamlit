@@ -9,13 +9,10 @@ from sklearn.linear_model import LinearRegression
 # Setting page configuration
 st.set_page_config(page_title="Superstore Sales Dashboard", layout="wide", initial_sidebar_state="expanded")
 
-# Adding custom CSS for professional styling
 st.markdown("""
     <style>
-        /* Importing Google Fonts for professional typography */
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
 
-        /* General styling */
         body {
             font-family: 'Roboto', sans-serif;
             background-color: #f7f9fc;
@@ -24,7 +21,6 @@ st.markdown("""
             background-color: #f7f9fc;
         }
 
-        /* Sidebar styling */
         .css-1d391kg {
             background-color: #ffffff;
             box-shadow: 2px 0 5px rgba(0,0,0,0.05);
@@ -43,7 +39,6 @@ st.markdown("""
             font-weight: 500;
         }
 
-        /* Main content styling */
         .main-title {
             color: #1a3c6e;
             font-size: 48px;
@@ -79,7 +74,6 @@ st.markdown("""
             font-size: 20px !important;
         }
 
-        /* Chart containers */
         .plotly-chart {
             background-color: #ffffff;
             border-radius: 8px;
@@ -87,7 +81,6 @@ st.markdown("""
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
-        /* Interesting fact section */
         .interesting-fact {
             background-color: #e0e7ff;
             border-left: 4px solid #1a3c6e;
@@ -98,7 +91,6 @@ st.markdown("""
             font-size: 16px;
         }
 
-        /* Divider */
         .divider {
             border-top: 1px solid #e0e7ff;
             margin: 20px 0;
@@ -106,14 +98,13 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Defining function to parse dates
+# parse dates
 def parse_date(date_str):
     try:
         return pd.to_datetime(date_str, format='%d/%m/%y')
     except:
         return pd.NaT
 
-# Loading and processing data
 @st.cache_data
 def load_data():
     df = pd.read_csv('superstore.csv', encoding='utf-8')
@@ -124,27 +115,22 @@ def load_data():
     df['Discount'] = pd.to_numeric(df['Discount'], errors='coerce').fillna(0)
     return df.dropna(subset=['Order Date'])
 
-# Loading data
 df = load_data()
 
-# Extracting years and regions for filters
 years = ['All'] + sorted(df['Order Date'].dt.year.unique().tolist())
 regions = ['All'] + sorted(df['Region'].unique().tolist())
 
-# Creating sidebar filters
 st.sidebar.header("Filters")
 year_filter = st.sidebar.selectbox("Select Year", years, index=0)
 region_filter = st.sidebar.selectbox("Select Region", regions, index=0)
 show_forecast = st.sidebar.checkbox("Show Sales Forecast", value=False)
 
-# Filtering data
 filtered_df = df.copy()
 if year_filter != 'All':
     filtered_df = filtered_df[filtered_df['Order Date'].dt.year == int(year_filter)]
 if region_filter != 'All':
     filtered_df = filtered_df[filtered_df['Region'] == region_filter]
 
-# Calculating KPIs
 total_sales = filtered_df['Sales'].sum()
 total_profit = filtered_df['Profit'].sum()
 profit_margin = (total_profit / total_sales * 100) if total_sales > 0 else 0
@@ -152,10 +138,8 @@ order_count = len(filtered_df)
 avg_discount = filtered_df['Discount'].mean() * 100
 customer_count = filtered_df['Customer ID'].nunique()
 
-# Displaying title
 st.markdown('<div class="main-title">Superstore Sales Dashboard</div>', unsafe_allow_html=True)
 
-# Displaying big numbers with heading
 st.markdown('<div class="section-header">Key Performance Indicators</div>', unsafe_allow_html=True)
 col1, col2, col3 = st.columns(3)
 col1.metric("Total Sales", f"${total_sales:,.0f}")
@@ -166,33 +150,27 @@ col4.metric("Profit Margin", f"{profit_margin:.1f}%")
 col5.metric("Avg Discount", f"{avg_discount:.1f}%")
 col6.metric("Customer Count", f"{customer_count:,}")
 
-# Adding divider
 st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
 
-# Preparing data for Sales and Profit Trends
 monthly_data = filtered_df.groupby(filtered_df['Order Date'].dt.to_period('M')).agg({
     'Sales': 'sum',
     'Profit': 'sum'
 }).reset_index()
 monthly_data['Order Date'] = monthly_data['Order Date'].dt.to_timestamp()
 
-# Identifying first and last months
 first_month = monthly_data.iloc[0]
 last_month = monthly_data.iloc[-1]
 
-# Identifying highest and lowest peaks for Sales and Profit
 max_sales_row = monthly_data.loc[monthly_data['Sales'].idxmax()]
 min_sales_row = monthly_data.loc[monthly_data['Sales'].idxmin()]
 max_profit_row = monthly_data.loc[monthly_data['Profit'].idxmax()]
 min_profit_row = monthly_data.loc[monthly_data['Profit'].idxmin()]
 
-# Defining color scheme
 COLOR_SALES = '#1a3c6e'  # Deep blue
 COLOR_PROFIT = '#2ca02c'  # Green
 COLOR_DISCOUNT = '#d81b60'  # Deep pink
 COLOR_FORECAST = '#ff7f0e'  # Orange
 
-# Creating Sales Trend chart
 fig_sales_trend = go.Figure()
 fig_sales_trend.add_trace(
     go.Scatter(
@@ -251,7 +229,6 @@ fig_sales_trend.update_layout(
     plot_bgcolor='#ffffff'
 )
 
-# Creating Profit Trend chart
 fig_profit_trend = go.Figure()
 fig_profit_trend.add_trace(
     go.Scatter(
@@ -310,7 +287,6 @@ fig_profit_trend.update_layout(
     plot_bgcolor='#ffffff'
 )
 
-# Profit by Region
 profit_by_region = filtered_df.groupby('Region')['Profit'].sum().reset_index()
 fig_profit_region = px.bar(
     profit_by_region,
@@ -349,7 +325,6 @@ fig_profit_region.update_layout(
     plot_bgcolor='#ffffff'
 )
 
-# Sales by Category
 sales_by_category = filtered_df.groupby('Category')['Sales'].sum().reset_index()
 fig_sales_category = px.pie(
     sales_by_category,
@@ -368,7 +343,6 @@ fig_sales_category.update_layout(
     plot_bgcolor='#ffffff'
 )
 
-# Discount Effect on Profit Margin
 filtered_df['Profit Margin'] = (filtered_df['Profit'] / filtered_df['Sales'] * 100).fillna(0)
 discount_bins = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8]
 filtered_df['Discount Bin'] = pd.cut(filtered_df['Discount'], bins=discount_bins, labels=[f"{i*10}-{(i+1)*10}%" for i in range(0, 8)], include_lowest=True)
@@ -409,7 +383,6 @@ fig_discount_margin.update_layout(
     plot_bgcolor='#ffffff'
 )
 
-# Top 5 Products by Sub-Categories
 top_products = filtered_df.groupby('Sub-Category')['Sales'].sum().nlargest(5).reset_index()
 fig_top_products = px.bar(
     top_products,
@@ -442,7 +415,6 @@ fig_top_products.update_layout(
     plot_bgcolor='#ffffff'
 )
 
-# Displaying visualizations with headings
 st.markdown('<div class="section-header">Sales and Profit Trends</div>', unsafe_allow_html=True)
 col7, col8 = st.columns(2)
 with col7:
@@ -480,7 +452,6 @@ with col12:
     st.plotly_chart(fig_top_products, use_container_width=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
-# Highlighting interesting fact
 st.markdown('<div class="section-header">Key Insight</div>', unsafe_allow_html=True)
 st.markdown(
     '<div class="interesting-fact">'
@@ -490,43 +461,35 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# Enhancement 1: Sales Forecast Visualization
 if show_forecast:
     st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
     st.markdown('<div class="section-header">Sales Forecast</div>', unsafe_allow_html=True)
     
-    # Preparing data for forecasting
     monthly_data['Time'] = np.arange(len(monthly_data))
     X = monthly_data[['Time']].values
     y = monthly_data['Sales'].values
-    
-    # Train-test split (80% train, 20% test, no shuffling for time series)
+
     from sklearn.model_selection import train_test_split
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=False, random_state=42)
     
-    # Fitting linear regression model on training data
     model = LinearRegression()
     model.fit(X_train, y_train)
     
-    # Evaluate model performance on test set and print to terminal
     from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
     y_pred = model.predict(X_test)
     mae = mean_absolute_error(y_test, y_pred)
     mse = mean_squared_error(y_test, y_pred)
     r2 = r2_score(y_test, y_pred)
     
-    # Calculating standard error for confidence interval (based on training data)
     predictions = model.predict(X_train)
     residuals = y_train - predictions
-    std_error = np.std(residuals) * 1.96  # 95% confidence interval
+    std_error = np.std(residuals) * 1.96
     
-    # Forecasting for next 6 months
     last_date = monthly_data['Order Date'].max()
     forecast_dates = pd.date_range(start=last_date + pd.Timedelta(days=30), periods=6, freq='M')
     forecast_time = np.arange(len(monthly_data), len(monthly_data) + 6).reshape(-1, 1)
     forecast_sales = model.predict(forecast_time)
     
-    # Creating forecast DataFrame
     forecast_df = pd.DataFrame({
         'Order Date': forecast_dates,
         'Sales': forecast_sales,
@@ -534,10 +497,8 @@ if show_forecast:
         'Upper CI': forecast_sales + std_error
     })
     
-    # Creating forecast chart
     fig_forecast = go.Figure()
     
-    # Historical sales
     fig_forecast.add_trace(
         go.Scatter(
             x=monthly_data['Order Date'],
@@ -548,7 +509,6 @@ if show_forecast:
         )
     )
     
-    # Forecasted sales
     fig_forecast.add_trace(
         go.Scatter(
             x=forecast_df['Order Date'],
@@ -559,7 +519,6 @@ if show_forecast:
         )
     )
     
-    # Confidence interval
     fig_forecast.add_trace(
         go.Scatter(
             x=pd.concat([pd.Series(forecast_df['Order Date']), pd.Series(forecast_df['Order Date'][::-1])]),
@@ -599,11 +558,9 @@ if show_forecast:
     st.plotly_chart(fig_forecast, use_container_width=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
-# Enhancement 2: Segment Performance Heatmap
 st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
 st.markdown('<div class="section-header">Segment Performance Heatmap</div>', unsafe_allow_html=True)
 
-# Preparing data for heatmap
 segment_category_sales = filtered_df.pivot_table(
     values='Sales',
     index='Segment',
@@ -613,7 +570,6 @@ segment_category_sales = filtered_df.pivot_table(
 ).reset_index()
 segment_category_sales = segment_category_sales.set_index('Segment')
 
-# Creating heatmap
 fig_heatmap = px.imshow(
     segment_category_sales,
     labels=dict(x="Category", y="Segment", color="Sales ($)"),
